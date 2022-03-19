@@ -1,0 +1,50 @@
+{
+    "name": "library",
+    "version": "0.1.0",
+    "main": "build/main.js",
+    "license": "MIT",
+    "scripts": {
+        "dev": "NODE_ENV=development ts-node-dev --inspect -- ./src/main.ts",
+        "test": "tsc -p tsconfig.test.json && ts-mocha test/**/*.test.ts",
+        "build": "rm -rf ./build && tsc -p tsconfig.build.json",
+        "lint": "eslint src/**/*.ts"
+    },
+    "devDependencies": {
+        "@types/dotenv": "^8.2.0",
+        "@types/koa": "^2.13.4",
+        "@types/koa__cors": "^3.1.1",
+        "@types/koa-bodyparser": "^4.3.5",
+        "@types/koa-logger": "^3.1.2",
+        "@types/koa-router": "^7.4.4",
+        "@types/luxon": "^2.0.9",
+        "@types/mime-types": "^2.1.1",
+        "@types/node": "^17.0.18",
+        "@typescript-eslint/eslint-plugin": "^5.15.0",
+        "@typescript-eslint/parser": "^5.15.0",
+        "eslint": "^8.11.0",
+        "ts-node": "^10.5.0",
+        "ts-node-dev": "^1.1.8",
+        "typescript": "^4.6.2"
+    },
+    "dependencies": {
+        "@koa/cors": "^3.1.0",
+        "@syrflover/iterator": "^0.5.0",
+        "@syrflover/of": "^0.0.4",
+        "axios": "^0.26.0",
+        "dotenv": "^16.0.0",
+        "joi": "^17.6.0",
+        "koa": "^2.13.4",
+        "koa-bodyparser": "^4.3.0",
+        "koa-logger": "^3.2.1",
+        "koa-router": "^10.1.1",
+        "log4js": "^6.4.1",
+        "luxon": "^2.3.0",
+        "nodekell": "^2.11.4",
+        "pg": "^8.7.3",
+        "reflect-metadata": "^0.1.13",
+        "safe-typeorm": "^1.0.10",
+        "typedi": "^0.10.0",
+        "typeorm": "^0.2.43",
+        "typeorm-typedi-extensions": "^0.4.1"
+    }
+}

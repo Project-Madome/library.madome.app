@@ -1,0 +1,17 @@
+.vscode/
+build/
+test/
+node_modules/
+package-lock.json
+.DS_Store
+.env
+.nvmrc
+.gitignore
+.node-dev.json
+.prettierrc
+
+deploy.sh
+Dockerfile
+k8s*
+ormconfig*
+tsconfig.test.json
