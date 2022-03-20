@@ -6,12 +6,12 @@ export const getBookImageURL = router.get(
     async (ctx) => {
         const { bookId, filename } = ctx.params;
 
-        const resp = await usecase.getBookImage.execute(
+        const { status, data } = await usecase.getBookImage.execute(
             parseInt(bookId, 10),
             filename,
         );
 
-        ctx.status = resp.status;
-        ctx.body = resp.data;
+        ctx.status = status;
+        ctx.body = data;
     },
 );

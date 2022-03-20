@@ -14,7 +14,10 @@ const payload = Joi.object()
     })
     .required();
 
-export const execute = async (bookId: number, filename: string) => {
+export const execute = async (
+    bookId: number,
+    filename: string,
+): Promise<{ status: number; data: Readable }> => {
     const validate = payload.validate({ bookId, filename });
 
     if (validate.error) {
@@ -29,13 +32,18 @@ export const execute = async (bookId: number, filename: string) => {
         throw new NotFoundError("Not found book");
     }
 
-    return axios.get<Readable>(
+    const { status, data } = await axios.get<Readable>(
         `${env.MADOME_FILE_URL}/v1/image/library/${bookId}/${filename}`,
         {
             responseType: "stream",
             validateStatus: () => true,
         },
     );
+
+    return {
+        status,
+        data,
+    };
 };
 
 /* axios
