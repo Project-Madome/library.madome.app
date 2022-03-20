@@ -27,24 +27,24 @@
         "typescript": "^4.6.2"
     },
     "dependencies": {
-        "@koa/cors": "^3.1.0",
+        "@koa/cors": "^3.2.0",
         "@syrflover/iterator": "^0.5.0",
         "@syrflover/of": "^0.0.4",
-        "axios": "^0.26.0",
+        "axios": "^0.26.1",
         "dotenv": "^16.0.0",
         "joi": "^17.6.0",
         "koa": "^2.13.4",
         "koa-bodyparser": "^4.3.0",
         "koa-logger": "^3.2.1",
         "koa-router": "^10.1.1",
-        "log4js": "^6.4.1",
-        "luxon": "^2.3.0",
+        "log4js": "^6.4.3",
+        "luxon": "^2.3.1",
         "nodekell": "^2.11.4",
         "pg": "^8.7.3",
         "reflect-metadata": "^0.1.13",
         "safe-typeorm": "^1.0.10",
         "typedi": "^0.10.0",
-        "typeorm": "^0.2.43",
+        "typeorm": "^0.3.0",
         "typeorm-typedi-extensions": "^0.4.1"
     }
 }

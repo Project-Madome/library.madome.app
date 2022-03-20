@@ -3,7 +3,7 @@ export class PayloadError extends Error {
         super();
 
         this.message = msg;
-        this.name = "Invalid Payload";
+        this.name = "Invalid payload";
     }
 }
 
@@ -12,6 +12,15 @@ export class NotFoundError extends Error {
         super();
 
         this.message = msg;
-        this.name = "Not Found Resource";
+        this.name = "Not found resource";
+    }
+}
+
+export class InternalError extends Error {
+    constructor(msg: string) {
+        super();
+
+        this.message = msg;
+        this.name = "Internal";
     }
 }

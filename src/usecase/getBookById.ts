@@ -6,13 +6,13 @@ import * as dto from "../dto";
 import { NotFoundError, PayloadError } from "../error";
 
 const payload = Joi.object({
-    book_id: Joi.number().min(1).required(),
+    bookId: Joi.number().min(1).required(),
 });
 
 export const execute = async (
-    book_id: number,
+    bookId: number,
 ): Promise<dto.Book.Book> => {
-    const validate = payload.validate({ book_id });
+    const validate = payload.validate({ bookId });
 
     if (validate.error) {
         throw new PayloadError(validate.error.message);
@@ -24,7 +24,7 @@ export const execute = async (
         );
     })
         .select()
-        .where("Book.id = :id", { id: book_id })
+        .where("Book.id = :id", { id: bookId })
         .getOne();
 
     if (!book) {

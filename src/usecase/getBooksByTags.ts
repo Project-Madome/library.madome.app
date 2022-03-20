@@ -6,8 +6,8 @@ import * as dto from "../dto";
 import * as entity from "../entity";
 import { enumIter } from "../lib/enumIter";
 import { createJoinQueryBuilder } from "safe-typeorm";
-import { createQueryBuilder } from "typeorm";
 import { getLogger } from "../logger";
+import { dataSource } from "../database";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const log = getLogger("usecase/getBooksByTags");
@@ -57,7 +57,8 @@ const ranking = (
     page: number,
     sortBy: dto.BookSortBy.BookSortBy,
 ) =>
-    createQueryBuilder()
+    dataSource
+        .createQueryBuilder()
         .select("id")
         .from(
             (x) =>
