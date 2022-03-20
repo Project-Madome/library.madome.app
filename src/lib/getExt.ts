@@ -1,1 +1,4 @@
-export const getExt = (st: string) => /\.[a-z]+$/i.exec(st)![0];
+export const getExt = (x: string) => {
+    const r = x.split(".");
+    return r[r.length - 1];
+};
