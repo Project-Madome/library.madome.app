@@ -4,7 +4,6 @@ import * as Joi from "joi";
 import { PayloadError } from "../error";
 import * as dto from "../dto";
 import * as entity from "../entity";
-import { enumIter } from "../lib/enumIter";
 import { createJoinQueryBuilder } from "safe-typeorm";
 import { getLogger } from "../logger";
 import { createQueryBuilder } from "typeorm";

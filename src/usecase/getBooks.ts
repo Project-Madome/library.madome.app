@@ -80,8 +80,7 @@ export const execute = async ({
                 books.updated_at AS a_updated_at,
                 book_tags.id AS b_id,
                 book_tags.kind AS b_kind,
-                book_tags.name AS b_name,
-                book_tags.book_id AS b_book_id
+                book_tags.name AS b_name
             FROM
                 (
                     SELECT
@@ -96,8 +95,11 @@ export const execute = async ({
                     LIMIT
                         $2
                 ) as books
+            LEFT JOIN book_tag_ref
+                ON book_tag_ref.book_id = books.id
             LEFT JOIN book_tags
-                ON book_tags.book_id = books.id
+                ON book_tags.id = book_tag_ref.book_tag_id
+
         `;
 
         const params: unknown[] = [perPage * (page - 1), perPage];

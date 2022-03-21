@@ -8,10 +8,14 @@ const log = getLogger("route/getBooks*");
 export const getBooks = router.get(
     "/books",
     async (ctx, next) => {
-        const book_ids = ctx.request.query["ids[]"];
+        let book_ids = ctx.request.query["ids[]"];
+
+        if (!("ids[]" in ctx.request.query)) {
+            return next();
+        }
 
         if (!Array.isArray(book_ids)) {
-            return next();
+            book_ids = book_ids ? [book_ids] : [];
         }
 
         const books = await usecase.getBooksByIds.execute(
