@@ -5,7 +5,7 @@ import * as entity from "../entity";
 import { env } from "../env";
 import { InternalError, NotFoundError, PayloadError } from "../error";
 import { getExt } from "../lib/getExt";
-import { dataSource } from "../database";
+import { getRepository } from "typeorm";
 
 const payload = Joi.object({
     bookId: Joi.number().min(1).required(),
@@ -18,7 +18,7 @@ export const execute = async (bookId: number): Promise<string[]> => {
         throw new PayloadError(validate.error.message);
     }
 
-    const book = await dataSource.getRepository(entity.Book).findOne({
+    const book = await getRepository(entity.Book).findOne({
         select: ["page"],
         where: {
             id: bookId,

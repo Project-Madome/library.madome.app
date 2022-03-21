@@ -1,9 +1,13 @@
-import { DataSource } from "typeorm";
+/* import { createConnection } from "typeorm";
 
 import { env } from "./env";
-import * as entity from "./entity";
+import * as entity from "./entity"; */
 
-export const dataSource = new DataSource({
+// export const dataSource = ;
+
+// import { DataSource } from "typeorm";
+
+/* export const dataSource = new DataSource({
     type: "postgres",
     username: env.POSTGRES_USER,
     host: env.POSTGRES_HOST,
@@ -18,4 +22,4 @@ export const dataSource = new DataSource({
         entity.BookTagRef,
         entity.BookTsvector,
     ],
-});
+}); */

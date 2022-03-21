@@ -1,11 +1,11 @@
 import * as Joi from "joi";
 import axios from "axios";
 
-import { dataSource } from "../database";
 import { NotFoundError, PayloadError } from "../error";
 import * as entity from "../entity";
 import { env } from "../env";
 import { Readable } from "stream";
+import { getRepository } from "typeorm";
 
 const payload = Joi.object()
     .keys({
@@ -24,9 +24,11 @@ export const execute = async (
         throw new PayloadError(validate.error.message);
     }
 
-    const book = await dataSource
-        .getRepository(entity.Book)
-        .findOneBy({ id: bookId });
+    const book = await getRepository(entity.Book).findOne({
+        where: {
+            id: bookId,
+        },
+    });
 
     if (!book) {
         throw new NotFoundError("Not found book");

@@ -7,7 +7,8 @@ import * as entity from "../entity";
 import { enumIter } from "../lib/enumIter";
 import { createJoinQueryBuilder } from "safe-typeorm";
 import { getLogger } from "../logger";
-import { dataSource } from "../database";
+import { createQueryBuilder } from "typeorm";
+import { bookSortBy } from "./payload";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const log = getLogger("usecase/getBooksByTags");
@@ -18,11 +19,7 @@ const payload = Joi.object({
     tags: Joi.array().items(tag).min(1).max(100).required(),
     perPage: Joi.number().min(1).max(100).required(),
     page: Joi.number().min(1).required(),
-    sortBy: Joi.allow(
-        ...enumIter(dto.BookSortBy.BookSortBy).map(
-            dto.BookSortBy.toKebabCase,
-        ),
-    ).required(),
+    sortBy: Joi.allow(...bookSortBy("kebab")).required(),
 });
 
 export type Payload = {
@@ -57,8 +54,7 @@ const ranking = (
     page: number,
     sortBy: dto.BookSortBy.BookSortBy,
 ) =>
-    dataSource
-        .createQueryBuilder()
+    createQueryBuilder()
         .select("id")
         .from(
             (x) =>
@@ -114,12 +110,12 @@ export const execute = async ({
         sortBy,
     });
 
-    if (!sortBy) {
-        throw "unreachable";
-    }
-
     if (validate.error) {
         throw new PayloadError(validate.error.message);
+    }
+
+    if (!sortBy) {
+        throw "unreachable";
     }
 
     const where = tags

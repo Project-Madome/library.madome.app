@@ -3,26 +3,18 @@ import { createJoinQueryBuilder } from "safe-typeorm";
 
 import * as dto from "../dto";
 import * as entity from "../entity";
-import { enumIter } from "../lib/enumIter";
 import { PayloadError } from "../error";
 import { getLogger } from "../logger";
-import { dataSource } from "../database";
+import { getConnection } from "typeorm";
+import { bookKind, bookSortBy } from "./payload";
 
 const log = getLogger("usecase/getBooks");
 
 const payload = Joi.object({
     perPage: Joi.number().min(1).max(100).required(),
     page: Joi.number().min(1).required(),
-    kind: Joi.allow(
-        ...enumIter(dto.BookKind.BookKind).map(
-            dto.BookKind.toKebabCase,
-        ),
-    ).disallow(null),
-    sortBy: Joi.allow(
-        ...enumIter(dto.BookSortBy.BookSortBy).map(
-            dto.BookSortBy.toKebabCase,
-        ),
-    )
+    kind: Joi.allow(...bookKind("kebab")).disallow(null),
+    sortBy: Joi.allow(...bookSortBy("kebab"))
         .disallow(null)
         .required(),
 });
@@ -68,12 +60,12 @@ export const execute = async ({
         sortBy,
     });
 
-    if (!sortBy) {
-        throw "unreachable";
-    }
-
     if (validate.error) {
         throw new PayloadError(validate.error.message);
+    }
+
+    if (!sortBy) {
+        throw "unreachable";
     }
 
     if (dto.BookSortBy.isRandom(sortBy)) {
@@ -114,7 +106,10 @@ export const execute = async ({
             params.push(dto.BookKind.toSnakeCase(kind));
         }
 
-        const rows: unknown[] = await dataSource.query(query, params);
+        const rows: unknown[] = await getConnection().query(
+            query,
+            params,
+        );
 
         return dto.Book.fromRows(rows);
     }
