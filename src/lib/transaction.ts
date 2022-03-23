@@ -1,21 +1,19 @@
 import { QueryRunner } from "typeorm";
 
-export const transaction = (
+export const transaction = async (
     queryRunner: QueryRunner,
-    f: () => any,
-): Promise<void> =>
-    new Promise(async (resolve, reject) => {
-        await queryRunner.startTransaction();
+    f: (queryRunner: QueryRunner) => Promise<void>,
+): Promise<void> => {
+    await queryRunner.startTransaction();
 
-        try {
-            await f();
+    try {
+        await f(queryRunner);
 
-            await queryRunner.commitTransaction();
-            resolve();
-        } catch (error) {
-            await queryRunner.rollbackTransaction();
-            reject(error);
-        } finally {
-            await queryRunner.release();
-        }
-    });
+        await queryRunner.commitTransaction();
+    } catch (error) {
+        await queryRunner.rollbackTransaction();
+        throw error;
+    } finally {
+        await queryRunner.release();
+    }
+};

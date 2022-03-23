@@ -2,6 +2,7 @@ import * as model from "../model";
 import * as usecase from "../usecase";
 import { router } from ".";
 import { getLogger } from "../logger";
+import { catcher } from "./lib/catcher";
 
 const log = getLogger("route/getBooks*");
 
@@ -18,12 +19,17 @@ export const getBooks = router.get(
             book_ids = book_ids ? [book_ids] : [];
         }
 
-        const books = await usecase.getBooksByIds.execute(
-            book_ids.map((x) => parseInt(x, 10)),
-        );
+        try {
+            const books = await usecase.getBooksByIds.execute(
+                book_ids.map((x) => parseInt(x, 10)),
+            );
 
-        ctx.status = 200;
-        ctx.body = books.map(model.Book.fromDto);
+            ctx.status = 200;
+            ctx.body = books.map(model.Book.fromDto);
+        } catch (error) {
+            log.error(error);
+            catcher(error, ctx);
+        }
     },
     async (ctx, next) => {
         let tags = ctx.request.query["tags[]"];
@@ -57,13 +63,20 @@ export const getBooks = router.get(
 
         log.debug("payload =", payload);
 
-        const books = await usecase.getBooksByTags.execute(payload);
+        try {
+            const books = await usecase.getBooksByTags.execute(
+                payload,
+            );
 
-        ctx.status = 200;
-        ctx.body = books.map(([tag, book]) => [
-            tag,
-            book.map(model.Book.fromDto),
-        ]);
+            ctx.status = 200;
+            ctx.body = books.map(([tag, book]) => [
+                tag,
+                book.map(model.Book.fromDto),
+            ]);
+        } catch (error) {
+            log.error(error);
+            catcher(error, ctx);
+        }
     },
     async (ctx) => {
         const {
@@ -75,16 +88,21 @@ export const getBooks = router.get(
             [key: string]: string | undefined;
         };
 
-        const books = await usecase.getBooks.execute(
-            usecase.getBooks.toPayload({
-                perPage,
-                page,
-                kind,
-                sortBy,
-            }),
-        );
+        try {
+            const books = await usecase.getBooks.execute(
+                usecase.getBooks.toPayload({
+                    perPage,
+                    page,
+                    kind,
+                    sortBy,
+                }),
+            );
 
-        ctx.status = 200;
-        ctx.body = books.map(model.Book.fromDto);
+            ctx.status = 200;
+            ctx.body = books.map(model.Book.fromDto);
+        } catch (error) {
+            log.error(error);
+            catcher(error, ctx);
+        }
     },
 );

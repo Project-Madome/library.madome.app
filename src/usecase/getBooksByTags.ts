@@ -7,18 +7,17 @@ import * as entity from "../entity";
 import { createJoinQueryBuilder } from "safe-typeorm";
 import { getLogger } from "../logger";
 import { createQueryBuilder } from "typeorm";
-import { bookSortBy } from "./payload";
+import { bookSortBy, bookTag } from "./payload";
+import { isNullOrUndefined } from "../type/guard";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const log = getLogger("usecase/getBooksByTags");
 
-const tag = Joi.array().items(Joi.string()).min(2).max(2).required();
-
 const payload = Joi.object({
-    tags: Joi.array().items(tag).min(1).max(100).required(),
+    tags: Joi.array().items(bookTag).min(1).max(100).required(),
     perPage: Joi.number().min(1).max(100).required(),
     page: Joi.number().min(1).required(),
-    sortBy: Joi.allow(...bookSortBy("kebab")).required(),
+    sortBy: Joi.valid(...bookSortBy("kebab")).required(),
 });
 
 export type Payload = {
@@ -96,6 +95,8 @@ const ranking = (
         .andWhere("ranking.rn <= " + `${page * perPage}`)
         .getQuery();
 
+// TODO: 없는 태그를 받으면 리턴 값에선 증발하는데, 리턴 값에 빈 배열만이라도 해서 추가해주는 건 어떨까? 아닌가?
+// [["not found", "tag"], []] 이런식으로 말이야
 export const execute = async ({
     tags = [],
     perPage = 3,
@@ -106,14 +107,16 @@ export const execute = async ({
         tags,
         perPage,
         page,
-        sortBy,
+        sortBy: dto.BookSortBy.toKebabCase(sortBy) || "",
     });
+
+    log.debug(validate.value);
 
     if (validate.error) {
         throw new PayloadError(validate.error.message);
     }
 
-    if (!sortBy) {
+    if (isNullOrUndefined(sortBy)) {
         throw "unreachable";
     }
 

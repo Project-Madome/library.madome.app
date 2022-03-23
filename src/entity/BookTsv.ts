@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column } from "typeorm";
+import { Column, Entity, PrimaryColumn } from "typeorm";
 
 // @Entity("book_tsv")
 @Entity("book_tsvector")

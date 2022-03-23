@@ -16,6 +16,14 @@ export class NotFoundError extends Error {
     }
 }
 
+export class AlreadyExistsError extends Error {
+    constructor(msg: string) {
+        super();
+        this.message = msg;
+        this.name = "Already exists resource";
+    }
+}
+
 export class InternalError extends Error {
     constructor(msg: string) {
         super();
@@ -24,3 +32,9 @@ export class InternalError extends Error {
         this.name = "Internal";
     }
 }
+
+export type Error =
+    | PayloadError
+    | NotFoundError
+    | AlreadyExistsError
+    | InternalError;

@@ -7,8 +7,8 @@ export enum BookKind {
     GameCg,
 }
 
-export const fromEntity = (book_kind: entity.BookKind) => {
-    switch (book_kind) {
+export const fromEntity = (bookKind: entity.BookKind) => {
+    switch (bookKind) {
         case entity.BookKind.Doujinshi:
             return BookKind.Doujinshi;
 
@@ -23,7 +23,25 @@ export const fromEntity = (book_kind: entity.BookKind) => {
     }
 };
 
-export const toKebabCase = (bookKind: BookKind): string => {
+export const toEntity = (bookKind: BookKind): entity.BookKind => {
+    switch (bookKind) {
+        case BookKind.Doujinshi:
+            return entity.BookKind.Doujinshi;
+
+        case BookKind.Manga:
+            return entity.BookKind.Manga;
+
+        case BookKind.ArtistCg:
+            return entity.BookKind.ArtistCg;
+
+        case BookKind.GameCg:
+            return entity.BookKind.GameCg;
+    }
+};
+
+export function toKebabCase(
+    bookKind: BookKind | null | undefined,
+): string | null | undefined {
     switch (bookKind) {
         case BookKind.Doujinshi:
             return "doujinshi";
@@ -36,8 +54,11 @@ export const toKebabCase = (bookKind: BookKind): string => {
 
         case BookKind.GameCg:
             return "game-cg";
+
+        default:
+            return bookKind;
     }
-};
+}
 
 export const fromKebabCase = (x: string): BookKind | null => {
     switch (x) {
@@ -58,7 +79,28 @@ export const fromKebabCase = (x: string): BookKind | null => {
     }
 };
 
-export const toSnakeCase = (bookKind: BookKind): string => {
+export const fromSnakeCase = (x: string): BookKind | null => {
+    switch (x) {
+        case "doujinshi":
+            return BookKind.Doujinshi;
+
+        case "manga":
+            return BookKind.Manga;
+
+        case "artist_cg":
+            return BookKind.ArtistCg;
+
+        case "game_cg":
+            return BookKind.GameCg;
+
+        default:
+            return null;
+    }
+};
+
+export const toSnakeCase = (
+    bookKind: BookKind | null | undefined,
+): string | null | undefined => {
     switch (bookKind) {
         case BookKind.Doujinshi:
             return "doujinshi";
@@ -71,5 +113,8 @@ export const toSnakeCase = (bookKind: BookKind): string => {
 
         case BookKind.GameCg:
             return "game_cg";
+
+        default:
+            return bookKind;
     }
 };

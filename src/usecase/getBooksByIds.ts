@@ -25,6 +25,8 @@ export const execute = async (
         bookIds,
     });
 
+    log.debug(validate.value);
+
     if (validate.error) {
         throw new PayloadError(validate.error.message);
     }

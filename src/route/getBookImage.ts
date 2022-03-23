@@ -1,17 +1,27 @@
 import { router } from ".";
+import { getLogger } from "../logger";
 import * as usecase from "../usecase";
+import { catcher } from "./lib/catcher";
 
-export const getBookImageURL = router.get(
+const log = getLogger("route/getBookImage");
+
+export const getBookImage = router.get(
     "/books/:bookId/images/:filename",
     async (ctx) => {
         const { bookId, filename } = ctx.params;
 
-        const { status, data } = await usecase.getBookImage.execute(
-            parseInt(bookId, 10),
-            filename,
-        );
+        try {
+            const { status, data } =
+                await usecase.getBookImage.execute(
+                    parseInt(bookId, 10),
+                    filename,
+                );
 
-        ctx.status = status;
-        ctx.body = data;
+            ctx.status = status;
+            ctx.body = data;
+        } catch (error) {
+            log.error(error);
+            catcher(error, ctx);
+        }
     },
 );

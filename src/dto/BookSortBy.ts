@@ -20,7 +20,9 @@ export const fromKebabCase = (x: string): BookSortBy | null => {
     }
 };
 
-export const toKebabCase = (sortBy: BookSortBy): string => {
+export const toKebabCase = (
+    sortBy: BookSortBy | null,
+): string | null => {
     switch (sortBy) {
         case BookSortBy.IdAsc:
             return "id-asc";
@@ -30,6 +32,9 @@ export const toKebabCase = (sortBy: BookSortBy): string => {
 
         case BookSortBy.Random:
             return "random";
+
+        default:
+            return sortBy;
     }
 };
 

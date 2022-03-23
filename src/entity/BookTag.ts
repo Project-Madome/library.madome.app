@@ -1,5 +1,5 @@
 import * as safe from "safe-typeorm";
-import { Entity, Column, Index, PrimaryColumn } from "typeorm";
+import { Column, Entity, Index, PrimaryColumn } from "typeorm";
 import { BookTagRef } from ".";
 
 export enum BookTagKind {
@@ -32,4 +32,13 @@ export class BookTag {
 
     @safe.Has.OneToMany(() => BookTagRef, (ref) => ref.tag)
     public ref!: safe.Has.OneToMany<BookTagRef>;
+
+    public static new(kind: string, name: string): BookTag {
+        const bookTag = new BookTag();
+
+        bookTag.kind = kind as BookTagKind;
+        bookTag.name = name;
+
+        return bookTag;
+    }
 }

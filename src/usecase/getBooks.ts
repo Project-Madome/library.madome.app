@@ -7,16 +7,15 @@ import { PayloadError } from "../error";
 import { getLogger } from "../logger";
 import { getConnection } from "typeorm";
 import { bookKind, bookSortBy } from "./payload";
+import { isNullOrUndefined } from "../type/guard";
 
 const log = getLogger("usecase/getBooks");
 
 const payload = Joi.object({
     perPage: Joi.number().min(1).max(100).required(),
     page: Joi.number().min(1).required(),
-    kind: Joi.allow(...bookKind("kebab")).disallow(null),
-    sortBy: Joi.allow(...bookSortBy("kebab"))
-        .disallow(null)
-        .required(),
+    kind: Joi.valid(...bookKind("kebab")),
+    sortBy: Joi.valid(...bookSortBy("kebab")).required(),
 });
 
 export type Payload = {
@@ -46,28 +45,24 @@ export const execute = async ({
     sortBy = dto.BookSortBy.BookSortBy.IdDesc,
     kind,
 }: Payload): Promise<dto.Book.Book[]> => {
-    log.debug({
+    const validate = payload.validate({
+        kind: dto.BookKind.toKebabCase(kind), // 없어도 되는 파라미터는 이렇게
+        sortBy: dto.BookSortBy.toKebabCase(sortBy) || "", // 있어야되는 파라미터는 이렇게. 친절한 에러메세지를 보고 싶으면 `|| ""`를 해줘야함
         perPage,
         page,
-        sortBy,
-        kind,
     });
 
-    const validate = payload.validate({
-        kind,
-        perPage,
-        page,
-        sortBy,
-    });
+    log.debug(validate.value);
 
     if (validate.error) {
         throw new PayloadError(validate.error.message);
     }
 
-    if (!sortBy) {
+    if (isNullOrUndefined(sortBy)) {
         throw "unreachable";
     }
 
+    // TODO: Remove
     if (dto.BookSortBy.isRandom(sortBy)) {
         const query = `
             SELECT
@@ -99,7 +94,6 @@ export const execute = async ({
                 ON book_tag_ref.book_id = books.id
             LEFT JOIN book_tags
                 ON book_tags.id = book_tag_ref.book_tag_id
-
         `;
 
         const params: unknown[] = [perPage * (page - 1), perPage];
@@ -129,7 +123,7 @@ export const execute = async ({
         .skip(perPage * (page - 1))
         .take(perPage);
 
-    if (kind) {
+    if (!isNullOrUndefined(kind)) {
         query.where("Book.kind = :kind", {
             kind: dto.BookKind.toSnakeCase(kind),
         });

@@ -1,8 +1,9 @@
 import * as Joi from "joi";
 import { createJoinQueryBuilder } from "safe-typeorm";
 
-import * as entity from "../entity";
 import * as dto from "../dto";
+import * as entity from "../entity";
+
 import { NotFoundError, PayloadError } from "../error";
 
 const payload = Joi.object({
