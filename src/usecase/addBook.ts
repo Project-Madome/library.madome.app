@@ -82,6 +82,10 @@ export const execute = async (p: Payload): Promise<void> => {
             // for book tag ref
             let tagIds: number[] = [];
 
+            /* 
+                BookTag
+            */
+
             if (p.tags.length > 0) {
                 const existsTags = await queryRunner.manager
                     .getRepository(entity.BookTag)
@@ -158,6 +162,10 @@ export const execute = async (p: Payload): Promise<void> => {
 
             log.debug("insertResult of Book =", a);
 
+            /* 
+                BookTagRef
+            */
+
             if (tagIds.length > 0) {
                 const bookTagRefs = tagIds.map((tagId) => ({
                     book_id: p.id,
@@ -170,6 +178,31 @@ export const execute = async (p: Payload): Promise<void> => {
 
                 log.debug("insertResult of BookTagRef =", aa);
             }
+
+            /* 
+                Tsvector
+            */
+
+            const tags = p.tags
+                .map(([kind, name]) =>
+                    `${kind} ${name}`.replaceAll(" ", "+"),
+                )
+                .join(" ");
+
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const _r = await getConnection()
+                .createQueryBuilder(
+                    entity.BookTsvector,
+                    "book_tsvector",
+                )
+                .insert()
+                .values({
+                    id: book.id,
+                    title_tsv: () => "to_tsvector('simple', :title)",
+                    tag_tsv: () => "to_tsvector('simple', :tag)",
+                })
+                .setParameters({ title: book.title, tag: tags })
+                .execute();
         },
     );
 };

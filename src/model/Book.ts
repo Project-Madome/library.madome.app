@@ -10,8 +10,8 @@ export type Book = {
     series: string[]; */
     kind: string;
     language: string;
-    tags: model.BookTag.BookTag[];
     page: number;
+    tags: model.BookTag.BookTag[];
     created_at: string; // Date
     updated_at: string;
 };
@@ -21,8 +21,8 @@ export const fromDto = ({
     title,
     kind,
     language,
-    tags,
     page,
+    tags,
     created_at,
     updated_at,
 }: dto.Book.Book): Book => ({
@@ -30,8 +30,8 @@ export const fromDto = ({
     title,
     kind: model.BookKind.from(kind),
     language,
-    tags, // : tags.map(model.BookTag.from),
     page,
+    tags, // : tags.map(model.BookTag.from),
     created_at: created_at.toISOString(),
     updated_at: updated_at.toISOString(),
 });

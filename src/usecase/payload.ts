@@ -19,8 +19,11 @@ export const bookKind = (case_: "snake" | "kebab"): string[] => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const bookSortBy = (_case_: "kebab") =>
-    enumIter(dto.BookSortBy.BookSortBy).map(
+export const bookSortBy = (
+    _case_: "kebab",
+    include?: (keyof typeof dto.BookSortBy.BookSortBy)[],
+) =>
+    enumIter(dto.BookSortBy.BookSortBy, include).map(
         dto.BookSortBy.toKebabCase,
     );
 

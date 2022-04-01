@@ -2,6 +2,8 @@ export enum BookSortBy {
     IdAsc,
     IdDesc,
     Random,
+    RankAsc,
+    RankDesc,
 }
 
 export const fromKebabCase = (x: string): BookSortBy | null => {
@@ -33,6 +35,12 @@ export const toKebabCase = (
         case BookSortBy.Random:
             return "random";
 
+        case BookSortBy.RankAsc:
+            return "rank-asc";
+
+        case BookSortBy.RankDesc:
+            return "rank-desc";
+
         default:
             return sortBy;
     }
@@ -40,15 +48,19 @@ export const toKebabCase = (
 
 export const toSort = (
     sortBy: BookSortBy,
-    alias = "Book",
+    alias?: string,
 ): string => {
     switch (sortBy) {
         case BookSortBy.IdAsc:
         case BookSortBy.IdDesc:
-            return alias + "." + "id";
+            return alias ? alias + "." + "id" : "id";
 
         case BookSortBy.Random:
             return "RANDOM()";
+
+        case BookSortBy.RankAsc:
+        case BookSortBy.RankDesc:
+            return alias ? alias + "." + "rank" : "rank";
     }
 };
 
@@ -62,6 +74,12 @@ export const toOrder = (sortBy: BookSortBy): "ASC" | "DESC" => {
 
         case BookSortBy.Random:
             return "ASC";
+
+        case BookSortBy.RankAsc:
+            return "ASC";
+
+        case BookSortBy.RankDesc:
+            return "DESC";
     }
 };
 
@@ -73,3 +91,6 @@ export const isRandom = (sortBy: BookSortBy): boolean => {
             return false;
     }
 };
+
+export const is = (sortBy: BookSortBy, is: BookSortBy[]): boolean =>
+    !!is.find((x) => x === sortBy);

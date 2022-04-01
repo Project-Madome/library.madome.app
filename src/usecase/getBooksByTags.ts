@@ -17,7 +17,9 @@ const payload = Joi.object({
     tags: Joi.array().items(bookTag).min(1).max(100).required(),
     perPage: Joi.number().min(1).max(100).required(),
     page: Joi.number().min(1).required(),
-    sortBy: Joi.valid(...bookSortBy("kebab")).required(),
+    sortBy: Joi.valid(
+        ...bookSortBy("kebab", ["IdAsc", "IdDesc", "Random"]),
+    ).required(),
 });
 
 export type Payload = {
