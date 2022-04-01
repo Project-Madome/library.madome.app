@@ -13,11 +13,11 @@ spec:
         spec:
             containers:
                 - name: madome-library
-                  image: madome-library:latest
+                  image: madome-library:{VERSION}
                   imagePullPolicy: Never
                   resources:
                       limits:
-                          memory: "256Mi"
+                          memory: "512Mi"
                           cpu: "500m"
                   ports:
                       - containerPort: 3112
