@@ -2,9 +2,12 @@ import { createConnection } from "typeorm";
 
 import * as entity from "./entity";
 import { env } from "./env";
+import { getLogger } from "./logger";
 import { server } from "./server";
 
 // useContainer(Container);
+
+const log = getLogger("main");
 
 async function main() {
     try {
@@ -28,14 +31,20 @@ async function main() {
             ],
         });
     } catch (error) {
-        console.error(error);
+        log.error(error);
         process.exit(1);
     }
 
     server.listen(3112);
 
     server.on("error", (error) => {
-        console.error(error);
+        log.error(error);
+    });
+
+    process.on("SIGTERM", () => {
+        server.close(() => {
+            log.info("gracefully shutdown the app");
+        });
     });
 }
 

@@ -1,5 +1,7 @@
 import "./route/mod";
 
+import * as http from "http";
+
 import * as Koa from "koa";
 import * as koaBodyparser from "koa-bodyparser";
 import * as koaLogger from "koa-logger";
@@ -7,7 +9,8 @@ import { router } from "./route";
 import axios from "axios";
 import { env } from "./env";
 
-export const server = new Koa();
+const app = new Koa();
+export const server = http.createServer(app.callback());
 
 const authChecker: Koa.Middleware = async (ctx, next) => {
     const isInternal = !ctx.request.headers["x-madome-public-access"];
@@ -37,10 +40,10 @@ const authChecker: Koa.Middleware = async (ctx, next) => {
     ctx.body = resp.data;
 };
 
-server.use(koaLogger());
+app.use(koaLogger());
 
-server.use(authChecker);
+app.use(authChecker);
 
-server.use(koaBodyparser());
+app.use(koaBodyparser());
 
-server.use(router.routes()).use(router.allowedMethods());
+app.use(router.routes()).use(router.allowedMethods());
