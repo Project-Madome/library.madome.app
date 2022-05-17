@@ -31,7 +31,7 @@ export const fromDto = ({
     kind: model.BookKind.from(kind),
     language,
     page,
-    tags, // : tags.map(model.BookTag.from),
+    tags: tags.map(model.BookTag.from),
     created_at: created_at.toISOString(),
     updated_at: updated_at.toISOString(),
 });

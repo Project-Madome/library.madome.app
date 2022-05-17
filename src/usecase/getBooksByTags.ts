@@ -29,13 +29,25 @@ export type Payload = {
     tags?: [string, string][];
 };
 
+const tagConvertToArray = (x: string | string[]): string[] => {
+    if (Array.isArray(x)) {
+        // x = [female, loli]
+
+        return x;
+    } else {
+        // x = female-loli
+
+        return x.split("-");
+    }
+};
+
 export const toPayload = ({
     perPage,
     page,
     sortBy,
     tags,
 }: {
-    tags: string[] | undefined; // [female-loli, female-anal]
+    tags: string[] | string[][] | undefined; // [female-loli, female-anal] or [[female, loli], [female, anal]]
     perPage: string | undefined;
     page: string | undefined;
     sortBy: string | undefined;
@@ -44,7 +56,7 @@ export const toPayload = ({
     page: page ? parseInt(page, 10) : undefined,
     sortBy: sortBy ? dto.BookSortBy.fromKebabCase(sortBy) : undefined,
     tags: tags
-        ?.map((x) => x.split("-"))
+        ?.map(tagConvertToArray)
         .map((x) => [x.shift(), x.join(" ")] as [string, string]),
 });
 
