@@ -165,9 +165,12 @@ export const execute = async ({
 
     log.debug(res);
 
-    const books = await usecase.getBooksByIds.execute(
-        res.map((x) => x.id),
-    );
+    const books =
+        res.length > 0
+            ? await usecase.getBooksByIds.execute(
+                  res.map((x) => x.id),
+              )
+            : [];
 
     if (!isNullOrUndefined(bookKind)) {
         return books.filter((x) => x.kind === bookKind);
