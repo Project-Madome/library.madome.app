@@ -30,7 +30,9 @@ const authChecker: Koa.Middleware = async (ctx, next) => {
         },
     );
 
-    ctx.response.headers = resp.headers;
+    for (const k in resp.headers) {
+        ctx.set(k, resp.headers[k]);
+    }
 
     if (resp.status === 200) {
         return next();
