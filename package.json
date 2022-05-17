@@ -7,7 +7,8 @@
         "dev": "NODE_ENV=development ts-node-dev --inspect -- ./src/main.ts",
         "test": "tsc -p tsconfig.test.json && ts-mocha test/**/*.test.ts",
         "build": "rm -rf ./build && tsc -p tsconfig.build.json",
-        "lint": "eslint src/**/*.ts"
+        "lint": "eslint src/**/*.ts",
+        "lint:fix": "eslint --fix src/**/*.ts"
     },
     "devDependencies": {
         "@types/dotenv": "^8.2.0",
@@ -41,6 +42,7 @@
         "luxon": "^2.3.1",
         "nodekell": "^2.11.4",
         "pg": "^8.7.3",
+        "qs": "^6.10.3",
         "reflect-metadata": "^0.1.13",
         "safe-typeorm": "^1.0.11",
         "typedi": "^0.10.0",

@@ -1,27 +1,34 @@
+import * as qs from "qs";
+
 import * as model from "../model";
 import * as usecase from "../usecase";
 import { router } from ".";
 import { getLogger } from "../logger";
 import { catcher } from "./lib/catcher";
+import { isNullOrUndefined } from "../type/guard";
 
 const log = getLogger("route/getBooks*");
 
 export const getBooks = router.get(
     "/books",
     async (ctx, next) => {
-        let book_ids = ctx.request.query["ids[]"];
+        let { ids: bookIds } = qs.parse(ctx.request.querystring) as {
+            ids: string | string[] | undefined;
+        };
 
-        if (!("ids[]" in ctx.request.query)) {
+        // let bookIds = ctx.request.query["ids[]"];
+
+        if (isNullOrUndefined(bookIds)) {
             return next();
         }
 
-        if (!Array.isArray(book_ids)) {
-            book_ids = book_ids ? [book_ids] : [];
+        if (!Array.isArray(bookIds)) {
+            bookIds = bookIds ? [bookIds] : [];
         }
 
         try {
             const books = await usecase.getBooksByIds.execute(
-                book_ids.map((x) => parseInt(x, 10)),
+                bookIds.map((x) => parseInt(x, 10)),
             );
 
             ctx.status = 200;
@@ -32,7 +39,18 @@ export const getBooks = router.get(
         }
     },
     async (ctx, next) => {
-        let tags = ctx.request.query["tags[]"];
+        const parsedQs = qs.parse(ctx.request.querystring);
+
+        let { tags } = parsedQs as {
+            tags: string | string[] | string[][] | undefined;
+        };
+        const {
+            "per-page": perPage,
+            page,
+            "sort-by": sortBy,
+        } = parsedQs;
+
+        /* let tags = ctx.request.query["tags[]"];
         const {
             "per-page": perPage,
             page,
@@ -42,9 +60,9 @@ export const getBooks = router.get(
             "per-page": string | undefined;
             page: string | undefined;
             "sort-by": string | undefined;
-        };
+        }; */
 
-        if (!("tags[]" in ctx.request.query)) {
+        if (isNullOrUndefined(tags)) {
             return next();
         }
 
@@ -55,10 +73,10 @@ export const getBooks = router.get(
         }
 
         const payload = usecase.getBooksByTags.toPayload({
-            tags,
-            perPage,
-            page,
-            sortBy,
+            tags: tags as string[] | string[][] | undefined,
+            perPage: perPage as string | undefined,
+            page: page as string | undefined,
+            sortBy: sortBy as string | undefined,
         });
 
         log.debug("payload =", payload);
