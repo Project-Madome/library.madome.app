@@ -1,6 +1,7 @@
+import * as safe from "safe-typeorm";
 import { Brackets, MigrationInterface, QueryRunner } from "typeorm";
 
-import { BookTag } from "../src/entity";
+import { Book, BookTag, BookTsvector } from "../src/entity";
 
 export class migrateV21647253889140 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
@@ -62,8 +63,6 @@ export class migrateV21647253889140 implements MigrationInterface {
                 )
                 .execute();
 
-        // TODO: support korean to tsvector
-
         await queryRunner.query(migrate_book);
         await Promise.all([
             queryRunner.query(update_book_kind("artist cg")),
@@ -77,6 +76,77 @@ export class migrateV21647253889140 implements MigrationInterface {
             update_book_tag_kind("male"),
             update_book_tag_kind("misc"),
         ]);
+
+        // TODO: Add tsvector
+
+        let i = 0;
+
+        try {
+            // eslint-disable-next-line no-constant-condition
+            while (true) {
+                const books = await safe
+                    .createJoinQueryBuilder(Book, "Book", (book) => {
+                        book.leftJoinAndSelect("tags", (tagRef) =>
+                            tagRef.leftJoinAndSelect("tag"),
+                        );
+                    })
+                    .take(1000)
+                    .skip(i * 1000)
+                    .orderBy("Book.id", "DESC")
+                    .getMany();
+
+                if (books.length <= 0) {
+                    break;
+                }
+
+                await Promise.all(
+                    books.map(async (book) => {
+                        const tag_refs = await book.tags.get();
+
+                        const tags = (
+                            await Promise.all(
+                                tag_refs.map((x) => x.tag.get()),
+                            )
+                        )
+                            .map((x) => [x.kind, x.name])
+                            .map(([kind, name]) =>
+                                `${kind} ${name}`.replaceAll(
+                                    " ",
+                                    "+",
+                                ),
+                            )
+                            .join(" ");
+
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        const _r = await queryRunner.manager
+                            .createQueryBuilder(
+                                BookTsvector,
+                                "book_tsvector",
+                            )
+                            .insert()
+                            .values({
+                                id: book.id,
+                                title_tsv: () =>
+                                    "to_tsvector('simple', :title)",
+                                tag_tsv: () =>
+                                    "to_tsvector('simple', :tag)",
+                            })
+                            .setParameters({
+                                title: book.title,
+                                tag: tags,
+                            })
+                            .execute();
+                    }),
+                );
+
+                i += 1;
+            }
+        } catch (e) {
+            console.error(e);
+
+            process.exit(1);
+            // throw e;
+        }
 
         // throw "";
     }
