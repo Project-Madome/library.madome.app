@@ -1,10 +1,8 @@
 import * as Joi from "joi";
-import axios from "axios";
 
 import { NotFoundError, PayloadError } from "../error";
 import * as entity from "../entity";
 import { env } from "../env";
-import { Readable } from "stream";
 import { getRepository } from "typeorm";
 
 const payload = Joi.object()
@@ -17,7 +15,7 @@ const payload = Joi.object()
 export const execute = async (
     bookId: number,
     filename: string,
-): Promise<{ status: number; data: Readable }> => {
+): Promise<string> => {
     const validate = payload.validate({ bookId, filename });
 
     if (validate.error) {
@@ -34,7 +32,9 @@ export const execute = async (
         throw new NotFoundError("Not found book");
     }
 
-    const { status, data } = await axios.get<Readable>(
+    return `${env.MADOME_FILE_URL}/v1/image/library/${bookId}/${filename}`;
+
+    /* const { status, data } = await axios.get<Readable>(
         `${env.MADOME_FILE_URL}/v1/image/library/${bookId}/${filename}`,
         {
             responseType: "stream",
@@ -45,7 +45,7 @@ export const execute = async (
     return {
         status,
         data,
-    };
+    }; */
 };
 
 /* axios

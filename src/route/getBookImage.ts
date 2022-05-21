@@ -11,14 +11,21 @@ export const getBookImage = router.get(
         const { bookId, filename } = ctx.params;
 
         try {
-            const { status, data } =
+            /* const { status, data } =
                 await usecase.getBookImage.execute(
                     parseInt(bookId, 10),
                     filename,
                 );
 
             ctx.status = status;
-            ctx.body = data;
+            ctx.body = data; */
+
+            const imageUrl = await usecase.getBookImageUrl.execute(
+                parseInt(bookId, 10),
+                filename,
+            );
+
+            ctx.redirect(imageUrl);
         } catch (error) {
             log.error(error);
             catcher(error, ctx);
