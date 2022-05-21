@@ -12,7 +12,9 @@ const log = getLogger("route/getBooks*");
 export const getBooks = router.get(
     "/books",
     async (ctx, next) => {
-        let { ids: bookIds } = qs.parse(ctx.request.querystring) as {
+        let { ids: bookIds } = qs.parse(ctx.request.querystring, {
+            arrayLimit: Infinity,
+        }) as {
             ids: string | string[] | undefined;
         };
 
@@ -39,7 +41,9 @@ export const getBooks = router.get(
         }
     },
     async (ctx, next) => {
-        const parsedQs = qs.parse(ctx.request.querystring);
+        const parsedQs = qs.parse(ctx.request.querystring, {
+            arrayLimit: Infinity,
+        });
 
         let { tags } = parsedQs as {
             tags: string | string[] | string[][] | undefined;

@@ -5,7 +5,7 @@ import { catcher } from "./lib/catcher";
 
 const log = getLogger("route/getBookImageList");
 
-export const getBookImageListUrl = router.get(
+export const getBookImageList = router.get(
     "/books/:bookId/images",
     async (ctx) => {
         const { bookId } = ctx.params;
