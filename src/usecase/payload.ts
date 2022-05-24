@@ -1,5 +1,3 @@
-import * as Joi from "joi";
-
 import { enumIter } from "../lib/enumIter";
 import * as dto from "../dto";
 
@@ -27,4 +25,18 @@ export const bookSortBy = (
         dto.BookSortBy.toKebabCase,
     );
 
-export const bookTag = Joi.array().items(Joi.string()).min(2).max(2);
+// export const bookTag = Joi.array().items(Joi.string()).min(2).max(2);
+export const bookTagKind = (case_: "kebab" | "snake") => {
+    const it = enumIter(dto.BookTagKind.BookTagKind);
+
+    switch (case_) {
+        case "kebab":
+            return it.map(dto.BookTagKind.toKebabCase);
+
+        case "snake":
+            return it.map(dto.BookTagKind.toSnakeCase);
+
+        default:
+            throw "unreachable";
+    }
+};

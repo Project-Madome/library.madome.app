@@ -7,14 +7,27 @@ import * as entity from "../entity";
 import { createJoinQueryBuilder } from "safe-typeorm";
 import { getLogger } from "../logger";
 import { createQueryBuilder } from "typeorm";
-import { bookSortBy, bookTag } from "./payload";
+import { bookSortBy, bookTagKind } from "./payload";
 import { isNullOrUndefined } from "../type/guard";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const log = getLogger("usecase/getBooksByTags");
 
 const payload = Joi.object({
-    tags: Joi.array().items(bookTag).min(1).max(100).required(),
+    tags: Joi.array()
+        .items(
+            Joi.array()
+                .items(
+                    Joi.valid(...bookTagKind("kebab")).required(),
+                    Joi.string().required(),
+                )
+                .min(2)
+                .max(2)
+                .required(),
+        )
+        .min(1)
+        .max(100)
+        .required(),
     perPage: Joi.number().min(1).max(100).required(),
     page: Joi.number().min(1).required(),
     sortBy: Joi.valid(

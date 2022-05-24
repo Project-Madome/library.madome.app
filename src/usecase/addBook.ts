@@ -3,7 +3,7 @@ import { getConnection } from "typeorm";
 
 import * as entity from "../entity";
 import * as dto from "../dto";
-import { bookKind, bookTag } from "./payload";
+import { bookKind, bookTagKind } from "./payload";
 import { transaction } from "../lib/transaction";
 import { getLogger } from "../logger";
 import { AlreadyExistsError, PayloadError } from "../error";
@@ -18,7 +18,19 @@ const payload = Joi.object()
         kind: Joi.valid(...bookKind("snake")).required(),
         language: Joi.string().required(),
         page: Joi.number().min(1).required(),
-        tags: Joi.array().items(bookTag).min(0).required(),
+        tags: Joi.array()
+            .items(
+                Joi.array()
+                    .items(
+                        Joi.valid(...bookTagKind("kebab")).required(),
+                        Joi.string().required(),
+                    )
+                    .min(2)
+                    .max(2)
+                    .required(),
+            )
+            .min(0)
+            .required(),
         created_at: Joi.date().required(),
     })
     .required();
