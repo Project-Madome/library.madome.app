@@ -1,9 +1,9 @@
 import * as safe from "safe-typeorm";
 import { Brackets, MigrationInterface, QueryRunner } from "typeorm";
 
-import { Book, BookTag, BookTsvector } from "../src/entity";
+import { Book, BookTag, BookTsvector } from "../entity";
 
-export class migrateV21647253889140 implements MigrationInterface {
+export class migrateBooks1647253889140 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         const migrate_book: string = `
             INSERT INTO books(id, title, kind, page, language, created_at, updated_at)
