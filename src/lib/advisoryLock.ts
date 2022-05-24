@@ -13,7 +13,7 @@ export async function advisoryLock(
 
         if (locked) {
             await f(conn);
-        } else if (!locked) {
+        } else {
             while (!locked) {
                 locked = await lock(uniqueKey, conn);
 
