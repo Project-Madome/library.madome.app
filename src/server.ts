@@ -19,9 +19,8 @@ const authChecker: Koa.Middleware = async (ctx, next) => {
         return next();
     }
 
-    const resp = await axios.patch(
+    const resp = await axios.get(
         `${env.MADOME_AUTH_URL}/auth/token`,
-        {},
         {
             headers: {
                 cookie: ctx.request.headers.cookie || "",
@@ -30,9 +29,9 @@ const authChecker: Koa.Middleware = async (ctx, next) => {
         },
     );
 
-    for (const k in resp.headers) {
+    /* for (const k in resp.headers) {
         ctx.set(k, resp.headers[k]);
-    }
+    } */
 
     if (resp.status === 200) {
         return next();

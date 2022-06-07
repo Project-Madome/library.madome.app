@@ -32,7 +32,7 @@ export const execute = async (
         throw new NotFoundError("Not found book");
     }
 
-    return `${env.MADOME_FILE_URL}/v1/image/library/${bookId}/${filename}`;
+    return `${env.MADOME_FILE_URL}/v1/image/library/${bookId}/${filename}?madome-2022=true`;
 
     /* const { status, data } = await axios.get<Readable>(
         `${env.MADOME_FILE_URL}/v1/image/library/${bookId}/${filename}`,
