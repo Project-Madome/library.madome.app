@@ -106,6 +106,8 @@ export const getBooks = router.get(
             "per-page": perPage,
             page,
             "sort-by": sortBy,
+            "more-than": moreThan,
+            "less-than": lessThan,
         } = ctx.request.query as {
             [key: string]: string | undefined;
         };
@@ -117,6 +119,8 @@ export const getBooks = router.get(
                     page,
                     kind,
                     sortBy,
+                    moreThan,
+                    lessThan,
                 }),
             );
 

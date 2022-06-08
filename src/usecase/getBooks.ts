@@ -18,6 +18,8 @@ const payload = Joi.object({
     sortBy: Joi.valid(
         ...bookSortBy("kebab", ["IdAsc", "IdDesc", "Random"]),
     ).required(),
+    moreThan: Joi.number().min(1),
+    lessThan: Joi.number().min(1),
 });
 
 export type Payload = {
@@ -25,6 +27,8 @@ export type Payload = {
     page?: number;
     sortBy?: dto.BookSortBy.BookSortBy | null;
     kind?: dto.BookKind.BookKind | null;
+    moreThan?: number | null;
+    lessThan?: number | null;
 };
 
 export const toPayload = ({
@@ -32,6 +36,8 @@ export const toPayload = ({
     page,
     sortBy,
     kind,
+    moreThan,
+    lessThan,
 }: {
     [key: string]: string | undefined;
 }): Payload => ({
@@ -39,6 +45,8 @@ export const toPayload = ({
     page: page ? parseInt(page, 10) : undefined,
     sortBy: sortBy ? dto.BookSortBy.fromKebabCase(sortBy) : undefined,
     kind: kind ? dto.BookKind.fromKebabCase(kind) : undefined,
+    moreThan: moreThan ? parseInt(moreThan, 10) : undefined,
+    lessThan: lessThan ? parseInt(lessThan, 10) : undefined,
 });
 
 export const execute = async ({
@@ -46,6 +54,8 @@ export const execute = async ({
     page = 1,
     sortBy = dto.BookSortBy.BookSortBy.IdDesc,
     kind,
+    moreThan,
+    lessThan,
 }: Payload): Promise<dto.Book.Book[]> => {
     const validate = payload.validate({
         kind: dto.BookKind.toKebabCase(kind), // 없어도 되는 파라미터는 이렇게
@@ -58,6 +68,15 @@ export const execute = async ({
 
     if (validate.error) {
         throw new PayloadError(validate.error.message);
+    }
+
+    if (
+        !isNullOrUndefined(lessThan) &&
+        !isNullOrUndefined(moreThan)
+    ) {
+        throw new PayloadError(
+            "must be only one of less-than or more-than",
+        );
     }
 
     if (isNullOrUndefined(sortBy)) {
@@ -128,6 +147,18 @@ export const execute = async ({
     if (!isNullOrUndefined(kind)) {
         query.where("Book.kind = :kind", {
             kind: dto.BookKind.toSnakeCase(kind),
+        });
+    }
+
+    if (!isNullOrUndefined(moreThan)) {
+        query.where("Book.id > :moreThan", {
+            moreThan,
+        });
+    }
+
+    if (!isNullOrUndefined(lessThan)) {
+        query.where("Book.id < :lessThan", {
+            lessThan,
         });
     }
 
